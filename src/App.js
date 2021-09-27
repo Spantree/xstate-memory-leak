@@ -7,8 +7,9 @@ import './App.css';
 const NUM_FIELDS = 100;
 const NUM_ROWS = 1200;
 
+// Generates fake data simulating a 3 sec load time
 function generateData() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       const rows = [];
       for (let i = 0; i < NUM_ROWS; i++) {
