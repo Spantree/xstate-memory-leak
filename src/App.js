@@ -7,9 +7,8 @@ import './App.css';
 const NUM_FIELDS = 100;
 const NUM_ROWS = 1200;
 
-// Generates fake data simulating a 3 sec load time
 function generateData() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       const rows = [];
       for (let i = 0; i < NUM_ROWS; i++) {
@@ -30,9 +29,11 @@ const machine = createMachine(
     initial: 'initial',
     strict: true,
     preserveActionOrder: true,
+
     context: {
-      data: [],
+      data: 0,
     },
+
     states: {
       initial: {
         after: {
@@ -55,7 +56,10 @@ const machine = createMachine(
           src: 'loadData',
           onDone: {
             target: 'active',
-            actions: 'updateData',
+            actions: ['updateData'],
+          },
+          onError: {
+            target: 'active',
           },
         },
       },
@@ -69,7 +73,9 @@ const machine = createMachine(
 
     actions: {
       updateData: assign({
-        data: (_, { data }) => data.rows,
+        data: (context, { data }) => {
+          return data.rows;
+        },
       }),
     },
 
@@ -89,7 +95,7 @@ function App() {
       <header className="App-header">
         <p>XState Memory Test</p>
         <pre>{JSON.stringify(current.value)}</pre>
-        {/* <pre>{JSON.stringify(current.context, null, 3)}</pre> */}
+        <pre>{JSON.stringify(current.context, null, 3)}</pre>
       </header>
     </div>
   );
