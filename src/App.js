@@ -23,6 +23,14 @@ function generateData() {
   });
 }
 
+let currentState = '(begin)';
+
+const logger = (state) => {
+  const previousState = currentState;
+  currentState = state;
+  console.log(`${previousState} to ${currentState}`);
+};
+
 const machine = createMachine(
   {
     key: 'test',
@@ -35,6 +43,7 @@ const machine = createMachine(
     },
 
     states: {
+      entry: [(context, event) => logger('entry state')],
       initial: {
         after: {
           INITIAL_WAIT: {
@@ -44,6 +53,7 @@ const machine = createMachine(
       },
 
       active: {
+        entry: [(context, event) => logger('active state')],
         after: {
           POLLING_INTERVAL: {
             target: 'fetching',
@@ -52,6 +62,7 @@ const machine = createMachine(
       },
 
       fetching: {
+        entry: [(context, event) => logger('fetching state')],
         invoke: {
           src: 'loadData',
           onDone: {
